@@ -1,8 +1,35 @@
 import { useState } from 'react'
 import { Container, Row, Col, Form } from 'react-bootstrap'
+import { connect } from 'react-redux'
 import Job from './Job'
 
-const MainSearch = () => {
+
+
+
+
+const mapStateToProps = state =>{
+  return{
+    toShow: state.cart.companies
+  }
+}
+
+const mapDispatchToProps = dispatch =>{
+  return{
+    addFavourite: company =>{
+      dispatch({
+        type: "Add_To_Favourite",
+        payload: company
+      })
+    }
+  }
+}
+
+
+
+
+
+
+const MainSearch = (props) => {
   const [query, setQuery] = useState('')
   const [jobs, setJobs] = useState([])
 
@@ -20,6 +47,8 @@ const MainSearch = () => {
       if (response.ok) {
         const { data } = await response.json()
         setJobs(data)
+        props.addFavourite(data)
+        console.log(props.toShow)
       } else {
         alert('Error fetching results')
       }
@@ -54,4 +83,4 @@ const MainSearch = () => {
   )
 }
 
-export default MainSearch
+export default connect(mapStateToProps,mapDispatchToProps)(MainSearch)
